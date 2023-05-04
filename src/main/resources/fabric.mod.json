@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "magnet-command",
+  "version": "${version}",
+  "name": "Magnet Command",
+  "description": "Server-side mod that adds a /magnet command so you don't need to take up valuable inventory space for a magnet.",
+  "authors": [
+    "ArnoKeesman"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/magnetcommand/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "dev.keesmand.magnetcommand.MagnetCommandMod"
+    ]
+  },
+  "mixins": [
+    "magnetcommand.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.19",
+    "fabric": "*",
+    "minecraft": "1.18.2"
+  }
+}
