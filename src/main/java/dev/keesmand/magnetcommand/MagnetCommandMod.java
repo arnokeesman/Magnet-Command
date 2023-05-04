@@ -12,15 +12,14 @@ import org.slf4j.LoggerFactory;
 public class MagnetCommandMod implements ModInitializer {
 	public static final String MOD_CONTAINER_ID = "magnet-command";
 	public static final ModMetadata MOD_METADATA = FabricLoader.getInstance().getModContainer(MOD_CONTAINER_ID).map(ModContainer::getMetadata).orElse(null);
-	public static final String MOD_ID = MOD_METADATA.getId();
+	public static final String MOD_ID = MOD_METADATA != null ? MOD_METADATA.getId() : "magnet-command | I guess, couldn't find it";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	@Override
 	public void onInitialize() {
+		// TODO: create a logger in utils
 		LOGGER.info("[Magnet Command] loading");
-		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
-			dispatcher.register(MagnetCommand.register());
-		});
+		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> dispatcher.register(MagnetCommand.register()));
 		LOGGER.info("[Magnet Command] loaded");
 	}
 }

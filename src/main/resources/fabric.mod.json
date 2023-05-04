@@ -17,7 +17,7 @@
     ]
   },
   "mixins": [
-    "magnetcommand.mixins.json"
+    "magnet-command.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.14.19",

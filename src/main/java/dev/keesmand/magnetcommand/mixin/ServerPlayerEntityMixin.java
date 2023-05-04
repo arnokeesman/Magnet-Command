@@ -15,7 +15,7 @@ import static dev.keesmand.magnetcommand.util.Magnet.ApplyMagnetEffect;
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
-	//ignore this
+	// this is just so we have access to `this`
 	public ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile profile) {
 		super(world, pos, yaw, profile);
 	}

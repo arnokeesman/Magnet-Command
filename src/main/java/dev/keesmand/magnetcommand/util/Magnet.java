@@ -4,13 +4,16 @@ import dev.keesmand.magnetcommand.enums.MagnetMode;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.LiteralText;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.List;
 
 import static dev.keesmand.magnetcommand.util.MagnetModeData.getMagnetMode;
+
+/* implementation stolen from https://github.com/maxvar/mcf-magnets/blob/8c4bb0126f43589931ffa256e31a0bd8c4231d82/src/main/kotlin/ru/maxvar/mcf/magnets/Magnet.kt under WTFPL
+ * thanks for this code maxvar!
+ */
 
 public class Magnet {
 	// this should be per player with a max value that can be set in config
@@ -25,9 +28,7 @@ public class Magnet {
 		Box box = new Box(
 				playerPos.x+range, playerPos.y+range, playerPos.z+range,
 				playerPos.x-range, playerPos.y-range, playerPos.z-range);
-		List<ItemEntity> items = player.getWorld().getEntitiesByType(EntityType.ITEM, box, item -> {
-			return !item.cannotPickup();
-		});
+		List<ItemEntity> items = player.getWorld().getEntitiesByType(EntityType.ITEM, box, Magnet::testItem);
 
 		if (mode == MagnetMode.Range) items.forEach(item -> PullItem(playerPos, item));
 	}
@@ -50,5 +51,9 @@ public class Magnet {
 		if (Math.abs(distance) > strength) return distance*.01;
 		if (Math.abs(distance) > (strength/2)) return distance*.05;
 		return distance*.1;
+	}
+
+	private static boolean testItem(ItemEntity item) {
+		return !item.cannotPickup();
 	}
 }

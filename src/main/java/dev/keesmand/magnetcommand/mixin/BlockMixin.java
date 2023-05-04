@@ -6,14 +6,10 @@ import dev.keesmand.magnetcommand.util.MagnetModeData;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.LiteralText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -31,25 +27,13 @@ public class BlockMixin {
 	private static void onDropStacks(BlockState state, World world, BlockPos pos, @Nullable BlockEntity blockEntity, Entity entity, ItemStack stack, CallbackInfo ci) {
 		if (!(world instanceof ServerWorld)) return;
 
-		if (entity instanceof PlayerEntity) {
-			PlayerEntity player = (PlayerEntity) entity;
-
+		if (entity instanceof PlayerEntity player) {
 			MagnetMode mode = MagnetModeData.getMagnetMode((IEntityDataSaver) player);
 			if (mode != MagnetMode.OnBreak) return;
 
-			getDroppedStacks(state, (ServerWorld)world, pos, blockEntity, entity, stack).forEach((stackx) -> {
-				injectStack(world, pos, player, stackx);
-			});
+			getDroppedStacks(state, (ServerWorld)world, pos, blockEntity, entity, stack)
+					.forEach(dropStack -> injectStack(world, pos, player, dropStack));
 			// TODO: inject items from inside containers as well
-			// well this doesnt work, just returns a bunch of air, probably means it's cleared earlier than onBreak
-//			if (blockEntity instanceof LootableContainerBlockEntity) {
-//				LootableContainerBlockEntity container = (LootableContainerBlockEntity) blockEntity;
-//				int size = container.size();
-//				for (int i = 0; i < size; i++) {
-//					injectStack(world, pos, player, container.getStack(i));
-//					container.removeStack(i);
-//				}
-//			}
 
 			ci.cancel();
 		}
