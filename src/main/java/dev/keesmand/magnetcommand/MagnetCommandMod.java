@@ -17,9 +17,13 @@ public class MagnetCommandMod implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		// TODO: create a logger in utils
-		LOGGER.info("[Magnet Command] loading");
+		log("loading...");
 		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> dispatcher.register(MagnetCommand.register()));
-		LOGGER.info("[Magnet Command] loaded");
+		log("loaded!");
+	}
+
+	private static final String logPrefix = "["+MOD_METADATA.getName()+"] ";
+	public static void log(String message) {
+		LOGGER.info(logPrefix+message);
 	}
 }
