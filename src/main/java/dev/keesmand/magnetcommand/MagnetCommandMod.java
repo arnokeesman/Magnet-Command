@@ -2,7 +2,7 @@ package dev.keesmand.magnetcommand;
 
 import dev.keesmand.magnetcommand.commands.MagnetCommand;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.ModMetadata;
@@ -18,7 +18,7 @@ public class MagnetCommandMod implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		log("loading...");
-		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> dispatcher.register(MagnetCommand.register()));
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(MagnetCommand.register()));
 		log("loaded!");
 	}
 

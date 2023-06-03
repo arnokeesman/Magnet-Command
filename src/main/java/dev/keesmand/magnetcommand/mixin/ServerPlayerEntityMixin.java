@@ -2,9 +2,11 @@ package dev.keesmand.magnetcommand.mixin;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.encryption.PlayerPublicKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -16,8 +18,8 @@ import static dev.keesmand.magnetcommand.util.Magnet.ApplyMagnetEffect;
 public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
 	// this is just so we have access to `this`
-	public ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile profile) {
-		super(world, pos, yaw, profile);
+	public ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile profile, @Nullable PlayerPublicKey publicKey) {
+		super(world, pos, yaw, profile, publicKey);
 	}
 
 	@Inject(method = "tick", at = @At("HEAD"))
