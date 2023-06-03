@@ -28,16 +28,16 @@ public class MagnetCommand {
 
 	public static int setMode(ServerCommandSource source, MagnetMode mode) {
 		if (!source.isExecutedByPlayer()) {
-			source.sendFeedback(Text.literal("This command can only be used by players"), false);
+			source.sendFeedback(() -> Text.literal("This command can only be used by players"), false);
 			return 0;
 		}
 		MagnetModeData.setMagnetMode((IEntityDataSaver) source.getPlayer(), mode);
-		source.sendFeedback(Text.literal("Set magnet mode to " + mode.name()), false);
+		source.sendFeedback(() -> Text.literal("Set magnet mode to " + mode.name()), false);
 
 		return 0;
 	}
 	public static int provideInfo(ServerCommandSource source) {
-		source.sendFeedback(Text.literal(MOD_METADATA.getName()+" "+MOD_METADATA.getVersion().getFriendlyString()), false);
+		source.sendFeedback(() -> Text.literal(MOD_METADATA.getName()+" "+MOD_METADATA.getVersion().getFriendlyString()), false);
 		return 0;
 	}
 }
