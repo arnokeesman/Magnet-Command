@@ -2,6 +2,8 @@ package dev.keesmand.magnetcommand.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import dev.keesmand.magnetcommand.MagnetCommandMod;
+import dev.keesmand.magnetcommand.config.MagnetCommandConfig;
 import dev.keesmand.magnetcommand.enums.MagnetMode;
 import dev.keesmand.magnetcommand.util.IEntityDataSaver;
 import dev.keesmand.magnetcommand.util.MagnetModeData;
@@ -14,22 +16,38 @@ import static dev.keesmand.magnetcommand.MagnetCommandMod.MOD_METADATA;
 
 public class MagnetCommand {
 	public static LiteralArgumentBuilder<ServerCommandSource> register() {
-		return CommandManager.literal("magnet")
-			.then(CommandManager.literal("OnBreak")
-				.requires(ctx -> Permissions.check(ctx, "magnet.mode.break", 2))
-				.executes(ctx -> setMode(ctx.getSource(), MagnetMode.OnBreak)))
-			.then(CommandManager.literal("Range")
-				.requires(ctx -> Permissions.check(ctx, "magnet.mode.range", 2))
-				.executes(ctx -> setMode(ctx.getSource(), MagnetMode.Range)))
-			.then(CommandManager.literal("Off")
-				.executes(ctx -> setMode(ctx.getSource(), MagnetMode.Off)))
+		LiteralArgumentBuilder<ServerCommandSource> node = CommandManager.literal("magnet")
 			.then(CommandManager.literal("info")
 				.executes(ctx -> provideInfo(ctx.getSource())));
+
+		MagnetCommandConfig config = MagnetCommandMod.CONFIG;
+
+		if (config.rangeEnabled || config.onBreakEnabled) {
+			node.then(CommandManager.literal("Off").executes(ctx -> setMode(ctx.getSource(), MagnetMode.Off)));
+		}
+
+		if (config.rangeEnabled) {
+			node.then(CommandManager.literal("Range")
+					.requires(ctx -> Permissions.check(ctx, "magnet.mode.range", config.permissionLevel))
+					.executes(ctx -> setMode(ctx.getSource(), MagnetMode.Range)));
+		}
+
+		if (config.onBreakEnabled) {
+			node.then(CommandManager.literal("OnBreak")
+				.requires(ctx -> Permissions.check(ctx, "magnet.mode.break", config.permissionLevel))
+				.executes(ctx -> setMode(ctx.getSource(), MagnetMode.OnBreak)));
+		}
+
+		return node;
 	}
 
-	public static int setMode(ServerCommandSource source, MagnetMode mode) throws CommandSyntaxException {
-		MagnetModeData.setMagnetMode((IEntityDataSaver) source.getPlayer(), mode);
-		source.sendFeedback(new LiteralText("Set magnet mode to "+mode.name()), false);
+	public static int setMode(ServerCommandSource source, MagnetMode mode) {
+		try {
+			MagnetModeData.setMagnetMode((IEntityDataSaver) source.getPlayer(), mode);
+			source.sendFeedback(new LiteralText("Set magnet mode to "+mode.name()), false);
+		} catch (CommandSyntaxException e) {
+			source.sendFeedback(new LiteralText("This command can only be used by players"), false);
+		}
 
 		return 0;
 	}
