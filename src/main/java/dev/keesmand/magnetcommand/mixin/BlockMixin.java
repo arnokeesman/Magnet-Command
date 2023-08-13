@@ -1,5 +1,8 @@
 package dev.keesmand.magnetcommand.mixin;
 
+import dev.keesmand.magnetcommand.MagnetCommandMod;
+import dev.keesmand.magnetcommand.config.MagnetCommandConfig;
+import dev.keesmand.magnetcommand.enums.DropMode;
 import dev.keesmand.magnetcommand.enums.MagnetMode;
 import dev.keesmand.magnetcommand.util.IEntityDataSaver;
 import dev.keesmand.magnetcommand.util.MagnetModeData;
@@ -26,13 +29,17 @@ public class BlockMixin {
 	@Inject(method = "dropStacks(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/entity/BlockEntity;Lnet/minecraft/entity/Entity;Lnet/minecraft/item/ItemStack;)V", at = @At("HEAD"), cancellable = true)
 	private static void onDropStacks(BlockState state, World world, BlockPos pos, @Nullable BlockEntity blockEntity, Entity entity, ItemStack stack, CallbackInfo ci) {
 		if (!(world instanceof ServerWorld)) return;
+		MagnetCommandConfig config = MagnetCommandMod.CONFIG;
+		if (config == null) return;
 
 		if (entity instanceof PlayerEntity player) {
 			MagnetMode mode = MagnetModeData.getMagnetMode((IEntityDataSaver) player);
 			if (mode != MagnetMode.OnBreak) return;
 
 			getDroppedStacks(state, (ServerWorld)world, pos, blockEntity, entity, stack)
-					.forEach(dropStack -> injectStack(world, pos, player, dropStack));
+					.forEach(dropStack -> injectStack(world,
+							config.dropLocation == DropMode.Block ? pos : player.getBlockPos(),
+							player, dropStack));
 			// TODO: inject items from inside containers as well
 
 			ci.cancel();

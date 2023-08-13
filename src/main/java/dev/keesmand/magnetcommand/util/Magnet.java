@@ -1,6 +1,9 @@
 package dev.keesmand.magnetcommand.util;
 
+import dev.keesmand.magnetcommand.MagnetCommandMod;
+import dev.keesmand.magnetcommand.config.MagnetCommandConfig;
 import dev.keesmand.magnetcommand.enums.MagnetMode;
+import dev.keesmand.magnetcommand.enums.MoveMode;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,35 +19,40 @@ import static dev.keesmand.magnetcommand.util.MagnetModeData.getMagnetMode;
  */
 
 public class Magnet {
-	// this should be per player with a max value that can be set in config
-	static final int range = 3;
-	// make this come from a config
-	static final boolean pull = true;
 	public static void ApplyMagnetEffect(PlayerEntity player) {
+		MagnetCommandConfig config = MagnetCommandMod.CONFIG;
+		if (config == null) return;
+		if (!config.rangeEnabled) return;
 		MagnetMode mode = getMagnetMode((IEntityDataSaver) player);
-		if (mode == MagnetMode.Off) return;
+		if (mode != MagnetMode.Range) return;
 
+		double range = config.range;
+
+		// get items within range
 		Vec3d playerPos = player.getPos();
 		Box box = new Box(
 				playerPos.x+range, playerPos.y+range, playerPos.z+range,
 				playerPos.x-range, playerPos.y-range, playerPos.z-range);
 		List<ItemEntity> items = player.getWorld().getEntitiesByType(EntityType.ITEM, box, Magnet::testItem);
 
-		if (mode == MagnetMode.Range) items.forEach(item -> PullItem(playerPos, item));
+		items.forEach(item -> {
+			if (config.moveMode == MoveMode.Pull) PullItem(playerPos, item, range);
+			else if (config.moveMode == MoveMode.Teleport) TeleportItem(playerPos, item);
+		});
 	}
 
-	public static void PullItem(Vec3d playerPos, ItemEntity item) {
+	public static void PullItem(Vec3d playerPos, ItemEntity item, double pullStrength) {
 			Vec3d itemPos = item.getPos();
-			if (pull) {
-				double pullStrength = range;
-				item.addVelocity(
-					force(playerPos.x-itemPos.x, pullStrength),
-					force(playerPos.y-itemPos.y, pullStrength),
-					force(playerPos.z-itemPos.z, pullStrength)
-				);
-			} else {
-				item.setPosition(playerPos);
-			}
+			item.addVelocity(
+				force(playerPos.x-itemPos.x, pullStrength),
+				force(playerPos.y-itemPos.y, pullStrength),
+				force(playerPos.z-itemPos.z, pullStrength)
+			);
+	}
+
+	public static void TeleportItem(Vec3d playerPos, ItemEntity item) {
+//		if (playerPos.distanceTo(item.getPos()) < 0.5) return;
+		item.setPosition(playerPos);
 	}
 
 	private static double force(double distance, double strength) {
