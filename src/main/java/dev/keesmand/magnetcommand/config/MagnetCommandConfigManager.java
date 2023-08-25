@@ -28,14 +28,15 @@ public class MagnetCommandConfigManager {
 		modes.add("Range", rangeMode);
 		rangeMode.addProperty("enabled", config.rangeEnabled);
 		rangeMode.addProperty("range", config.range);
-		rangeMode.addProperty("_c1", "mode can be either Pull or Teleport");
-		rangeMode.addProperty("mode", config.moveMode.name());
+		rangeMode.addProperty("_c1", "moveMode can be either Pull or Teleport");
+		rangeMode.addProperty("moveMode", config.moveMode.name());
 
 		JsonObject onBreakMode = new JsonObject();
 		modes.add("OnBreak", onBreakMode);
 		onBreakMode.addProperty("enabled", config.onBreakEnabled);
 		onBreakMode.addProperty("_c1", "drop location (for when inventory is full), either Block or Player");
 		onBreakMode.addProperty("dropLocation", config.dropLocation.name());
+		onBreakMode.addProperty("includeContainerItems", config.includeContainerItems);
 
 
 		try (Writer writer = new FileWriter(configFile)) {
@@ -66,7 +67,9 @@ public class MagnetCommandConfigManager {
 			JsonObject rangeModeObject = modesObject.get("Range").getAsJsonObject();
 			boolean rangeEnabled = rangeModeObject.get("enabled").getAsBoolean();
 			int range = rangeModeObject.get("range").getAsInt();
-			String moveModeString = rangeModeObject.get("mode").getAsString();
+			String moveModeString = rangeModeObject.has("moveMode")
+					? rangeModeObject.get("moveMode").getAsString()
+					: rangeModeObject.get("mode").getAsString();
 			if (!isValidEnumValue(MoveMode.class, moveModeString))
 				throw new IllegalArgumentException("unknown moveMode");
 			MoveMode moveMode = MoveMode.valueOf(moveModeString);
@@ -77,8 +80,13 @@ public class MagnetCommandConfigManager {
 			if (!isValidEnumValue(DropMode.class, dropModeString))
 				throw new IllegalArgumentException("unknown dropLocation value");
 			DropMode dropMode = DropMode.valueOf(dropModeString);
+			boolean includeContainerItems = onBreakModeObject.has("includeContainerItems")
+					? onBreakModeObject.get("includeContainerItems").getAsBoolean()
+					: true;
 
-			return new MagnetCommandConfig(permissionLevel, rangeEnabled, range, moveMode, onBreakEnabled, dropMode);
+			MagnetCommandConfig config = new MagnetCommandConfig(permissionLevel, rangeEnabled, range, moveMode, onBreakEnabled, dropMode, includeContainerItems);
+			save(config);
+			return config;
 
 		} catch (Exception e) {
 			String message;
@@ -90,7 +98,7 @@ public class MagnetCommandConfigManager {
 	}
 
 	static MagnetCommandConfig generateDefault() {
-		return new MagnetCommandConfig(2, true, 3, MoveMode.Pull, true, DropMode.Block);
+		return new MagnetCommandConfig(2, true, 3, MoveMode.Pull, true, DropMode.Block, true);
 	}
 
 	private static <E extends Enum<E>> boolean isValidEnumValue(Class<E> enumType, String value) {
