@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static net.minecraft.block.Block.dropStack;
+import static dev.keesmand.magnetcommand.util.Magnet.InjectStack;
 import static net.minecraft.block.Block.getDroppedStacks;
 
 @Mixin(Block.class)
@@ -37,17 +37,11 @@ public class BlockMixin {
 			if (mode != MagnetMode.OnBreak) return;
 
 			getDroppedStacks(state, (ServerWorld)world, pos, blockEntity, entity, stack)
-					.forEach(dropStack -> injectStack(world,
+					.forEach(dropStack -> InjectStack(world,
 							config.dropLocation == DropMode.Block ? pos : player.getBlockPos(),
 							player, dropStack));
-			// TODO: inject items from inside containers as well
 
 			ci.cancel();
 		}
-	}
-
-	private static void injectStack(World world, BlockPos pos, PlayerEntity player, ItemStack stack) {
-		if (!player.getInventory().insertStack(stack))
-			dropStack(world, pos, stack);
 	}
 }
