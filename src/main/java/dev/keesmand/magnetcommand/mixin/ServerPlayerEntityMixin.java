@@ -25,30 +25,30 @@ import static dev.keesmand.magnetcommand.util.MagnetModeData.getMagnetMode;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin {
-	@Inject(method = "tick", at = @At("HEAD"))
-	private void magnetRangeMode(CallbackInfo callbackInfo) {
-		// well this sure is a nice trick, thanks u/tom_the_geek
-		// https://www.reddit.com/r/fabricmc/comments/nw3rs8/comment/h17daen
-		PlayerEntity player = (PlayerEntity)(Object)this;
+    @Inject(method = "tick", at = @At("HEAD"))
+    private void magnetRangeMode(CallbackInfo callbackInfo) {
+        // well this sure is a nice trick, thanks u/tom_the_geek
+        // https://www.reddit.com/r/fabricmc/comments/nw3rs8/comment/h17daen
+        PlayerEntity player = (PlayerEntity) (Object) this;
 
-		MagnetCommandConfig config = MagnetCommandMod.CONFIG;
-		if (config == null) return;
-		if (!config.rangeEnabled) return;
-		MagnetMode mode = getMagnetMode((IEntityDataSaver) player);
-		if (mode != MagnetMode.Range) return;
+        MagnetCommandConfig config = MagnetCommandMod.CONFIG;
+        if (config == null) return;
+        if (!config.rangeEnabled) return;
+        MagnetMode mode = getMagnetMode((IEntityDataSaver) player);
+        if (mode != MagnetMode.Range) return;
 
-		double range = config.range;
+        double range = config.range;
 
-		// get items within range
-		Vec3d playerPos = player.getPos();
-		Box box = new Box(
-				playerPos.x+range, playerPos.y+range, playerPos.z+range,
-				playerPos.x-range, playerPos.y-range, playerPos.z-range);
-		List<ItemEntity> items = player.getWorld().getEntitiesByType(EntityType.ITEM, box, Magnet::TestItemEntity);
+        // get items within range
+        Vec3d playerPos = player.getPos();
+        Box box = new Box(
+                playerPos.x + range, playerPos.y + range, playerPos.z + range,
+                playerPos.x - range, playerPos.y - range, playerPos.z - range);
+        List<ItemEntity> items = player.getWorld().getEntitiesByType(EntityType.ITEM, box, Magnet::TestItemEntity);
 
-		items.forEach(item -> {
-			if (config.moveMode == MoveMode.Pull) PullItem(playerPos, item, range);
-			else if (config.moveMode == MoveMode.Teleport) TeleportItem(playerPos, item);
-		});
-	}
+        items.forEach(item -> {
+            if (config.moveMode == MoveMode.Pull) PullItem(playerPos, item, range);
+            else if (config.moveMode == MoveMode.Teleport) TeleportItem(playerPos, item);
+        });
+    }
 }

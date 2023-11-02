@@ -26,22 +26,22 @@ import static net.minecraft.block.Block.getDroppedStacks;
 
 @Mixin(Block.class)
 public class BlockMixin {
-	@Inject(method = "dropStacks(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/entity/BlockEntity;Lnet/minecraft/entity/Entity;Lnet/minecraft/item/ItemStack;)V", at = @At("HEAD"), cancellable = true)
-	private static void onDropStacks(BlockState state, World world, BlockPos pos, @Nullable BlockEntity blockEntity, Entity entity, ItemStack stack, CallbackInfo ci) {
-		if (!(world instanceof ServerWorld)) return;
-		MagnetCommandConfig config = MagnetCommandMod.CONFIG;
-		if (config == null) return;
+    @Inject(method = "dropStacks(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/entity/BlockEntity;Lnet/minecraft/entity/Entity;Lnet/minecraft/item/ItemStack;)V", at = @At("HEAD"), cancellable = true)
+    private static void onDropStacks(BlockState state, World world, BlockPos pos, @Nullable BlockEntity blockEntity, Entity entity, ItemStack stack, CallbackInfo ci) {
+        if (!(world instanceof ServerWorld)) return;
+        MagnetCommandConfig config = MagnetCommandMod.CONFIG;
+        if (config == null) return;
 
-		if (entity instanceof PlayerEntity player) {
-			MagnetMode mode = MagnetModeData.getMagnetMode((IEntityDataSaver) player);
-			if (mode != MagnetMode.OnBreak) return;
+        if (entity instanceof PlayerEntity player) {
+            MagnetMode mode = MagnetModeData.getMagnetMode((IEntityDataSaver) player);
+            if (mode != MagnetMode.OnBreak) return;
 
-			getDroppedStacks(state, (ServerWorld)world, pos, blockEntity, entity, stack)
-					.forEach(dropStack -> InjectStack(world,
-							config.dropLocation == DropMode.Block ? pos : player.getBlockPos(),
-							player, dropStack));
+            getDroppedStacks(state, (ServerWorld) world, pos, blockEntity, entity, stack)
+                    .forEach(dropStack -> InjectStack(world,
+                            config.dropLocation == DropMode.Block ? pos : player.getBlockPos(),
+                            player, dropStack));
 
-			ci.cancel();
-		}
-	}
+            ci.cancel();
+        }
+    }
 }

@@ -17,12 +17,12 @@ import java.util.Optional;
 
 @Mixin(PlayerManager.class)
 public class PlayerManagerMixin {
-	@Inject(
-			method = "respawnPlayer",
-			at = @At(value = "INVOKE", target="Lnet/minecraft/server/network/ServerPlayerEntity;copyFrom(Lnet/minecraft/server/network/ServerPlayerEntity;Z)V"),
-			locals = LocalCapture.CAPTURE_FAILHARD)
-	void handlePlayerRespawn(ServerPlayerEntity oldPlayer, boolean alive, CallbackInfoReturnable<ServerPlayerEntity> cir, BlockPos blockPos, float f, boolean bl, ServerWorld serverWorld, Optional optional, ServerWorld serverWorld2, ServerPlayerEntity newPlayer) {
-		MagnetMode mode = MagnetModeData.getMagnetMode((IEntityDataSaver) oldPlayer);
-		MagnetModeData.setMagnetMode((IEntityDataSaver) newPlayer, mode);
-	}
+    @Inject(
+            method = "respawnPlayer",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;copyFrom(Lnet/minecraft/server/network/ServerPlayerEntity;Z)V"),
+            locals = LocalCapture.CAPTURE_FAILHARD)
+    void handlePlayerRespawn(ServerPlayerEntity oldPlayer, boolean alive, CallbackInfoReturnable<ServerPlayerEntity> cir, BlockPos blockPos, float f, boolean bl, ServerWorld serverWorld, Optional optional, ServerWorld serverWorld2, ServerPlayerEntity newPlayer) {
+        MagnetMode mode = MagnetModeData.getMagnetMode((IEntityDataSaver) oldPlayer);
+        MagnetModeData.setMagnetMode((IEntityDataSaver) newPlayer, mode);
+    }
 }
