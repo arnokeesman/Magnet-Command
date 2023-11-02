@@ -17,13 +17,15 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ServerPlayerInteractionManager.class)
 public class ServerPlayerInteractionManagerMixin {
-	@Shadow @Final protected ServerPlayerEntity player;
+    @Shadow
+    @Final
+    protected ServerPlayerEntity player;
 
-	@Inject(
-			method = "tryBreakBlock",
-			at = @At(value = "INVOKE", target="Lnet/minecraft/block/Block;onBreak(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/entity/player/PlayerEntity;)V"),
-			locals = LocalCapture.CAPTURE_FAILHARD)
-	void storeBreakingAuthor(BlockPos pos, CallbackInfoReturnable<Boolean> cir, BlockState blockState, BlockEntity blockEntity, Block block) {
-		MagnetCommandMod.BLOCKS_BROKEN_BY.put(pos, player);
-	}
+    @Inject(
+            method = "tryBreakBlock",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;onBreak(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/entity/player/PlayerEntity;)V"),
+            locals = LocalCapture.CAPTURE_FAILHARD)
+    void storeBreakingAuthor(BlockPos pos, CallbackInfoReturnable<Boolean> cir, BlockState blockState, BlockEntity blockEntity, Block block) {
+        MagnetCommandMod.BLOCKS_BROKEN_BY.put(pos, player);
+    }
 }

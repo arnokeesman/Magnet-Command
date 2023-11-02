@@ -12,23 +12,23 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Entity.class)
 public abstract class ModEntityDataSaverMixin implements IEntityDataSaver {
-	private NbtCompound persistantData;
+    private NbtCompound persistantData;
 
-	@Override
-	public NbtCompound getPersistantData() {
-		if (persistantData == null) persistantData = new NbtCompound();
-		return persistantData;
-	}
+    @Override
+    public NbtCompound getPersistantData() {
+        if (persistantData == null) persistantData = new NbtCompound();
+        return persistantData;
+    }
 
-	@Inject(method = "writeNbt", at = @At("HEAD"))
-	protected void injectWriteMethod(NbtCompound nbt, CallbackInfoReturnable ci) {
-		if (persistantData == null) return;
-		nbt.put("magnet", persistantData);
-	}
+    @Inject(method = "writeNbt", at = @At("HEAD"))
+    protected void injectWriteMethod(NbtCompound nbt, CallbackInfoReturnable ci) {
+        if (persistantData == null) return;
+        nbt.put("magnet", persistantData);
+    }
 
-	@Inject(method = "readNbt", at = @At("HEAD"))
-	protected void injectReadMethod(NbtCompound nbt, CallbackInfo ci) {
-		if (!nbt.contains("magnet", NbtElement.COMPOUND_TYPE)) return;
-		persistantData = nbt.getCompound("magnet");
-	}
+    @Inject(method = "readNbt", at = @At("HEAD"))
+    protected void injectReadMethod(NbtCompound nbt, CallbackInfo ci) {
+        if (!nbt.contains("magnet", NbtElement.COMPOUND_TYPE)) return;
+        persistantData = nbt.getCompound("magnet");
+    }
 }

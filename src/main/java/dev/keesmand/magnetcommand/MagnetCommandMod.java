@@ -17,32 +17,33 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MagnetCommandMod implements ModInitializer {
-	public static final String MOD_CONTAINER_ID = "magnet-command";
-	public static final ModMetadata MOD_METADATA = FabricLoader.getInstance().getModContainer(MOD_CONTAINER_ID).map(ModContainer::getMetadata).orElse(null);
-	public static final String MOD_ID = MOD_METADATA != null ? MOD_METADATA.getId() : "magnet-command | I guess, couldn't find it";
-	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-	public static MagnetCommandConfig CONFIG;
+    public static final String MOD_CONTAINER_ID = "magnet-command";
+    public static final ModMetadata MOD_METADATA = FabricLoader.getInstance().getModContainer(MOD_CONTAINER_ID).map(ModContainer::getMetadata).orElse(null);
+    public static final String MOD_ID = MOD_METADATA != null ? MOD_METADATA.getId() : "magnet-command | I guess, couldn't find it";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    private static final String logPrefix = "[" + MOD_METADATA.getName() + "] ";
+    public static MagnetCommandConfig CONFIG;
     public static Map<BlockPos, ServerPlayerEntity> BLOCKS_BROKEN_BY;
 
-	@Override
-	public void onInitialize() {
-		log("loading...");
-		CONFIG = MagnetCommandConfigManager.load();
-		if (CONFIG == null) {
-			log("disabling mod...");
-			return;
-		}
-		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> dispatcher.register(MagnetCommand.register()));
+    public static void log(String message) {
+        LOGGER.info(logPrefix + message);
+    }
+
+    public static void error(String message) {
+        LOGGER.error(logPrefix + message);
+    }
+
+    @Override
+    public void onInitialize() {
+        log("loading...");
+        CONFIG = MagnetCommandConfigManager.load();
+        if (CONFIG == null) {
+            log("disabling mod...");
+            return;
+        }
+        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> dispatcher.register(MagnetCommand.register()));
         BLOCKS_BROKEN_BY = new HashMap<>();
 
-		log("loaded!");
-	}
-
-	private static final String logPrefix = "["+MOD_METADATA.getName()+"] ";
-	public static void log(String message) {
-		LOGGER.info(logPrefix+message);
-	}
-	public static void error(String message) {
-		LOGGER.error(logPrefix+message);
-	}
+        log("loaded!");
+    }
 }

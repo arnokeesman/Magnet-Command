@@ -14,32 +14,32 @@ import static net.minecraft.block.Block.dropStack;
  */
 
 public class Magnet {
-	public static void PullItem(Vec3d playerPos, ItemEntity item, double pullStrength) {
-			Vec3d itemPos = item.getPos();
-			item.addVelocity(
-				force(playerPos.x-itemPos.x, pullStrength),
-				force(playerPos.y-itemPos.y, pullStrength),
-				force(playerPos.z-itemPos.z, pullStrength)
-			);
-	}
+    public static void PullItem(Vec3d playerPos, ItemEntity item, double pullStrength) {
+        Vec3d itemPos = item.getPos();
+        item.addVelocity(
+                force(playerPos.x - itemPos.x, pullStrength),
+                force(playerPos.y - itemPos.y, pullStrength),
+                force(playerPos.z - itemPos.z, pullStrength)
+        );
+    }
 
-	public static void TeleportItem(Vec3d playerPos, ItemEntity item) {
+    public static void TeleportItem(Vec3d playerPos, ItemEntity item) {
 //		if (playerPos.distanceTo(item.getPos()) < 0.5) return;
-		item.setPosition(playerPos);
-	}
+        item.setPosition(playerPos);
+    }
 
-	private static double force(double distance, double strength) {
-		if (Math.abs(distance) > strength) return distance*.01;
-		if (Math.abs(distance) > (strength/2)) return distance*.05;
-		return distance*.1;
-	}
+    private static double force(double distance, double strength) {
+        if (Math.abs(distance) > strength) return distance * .01;
+        if (Math.abs(distance) > (strength / 2)) return distance * .05;
+        return distance * .1;
+    }
 
-	public static boolean TestItemEntity(ItemEntity item) {
-		return !item.cannotPickup();
-	}
+    public static boolean TestItemEntity(ItemEntity item) {
+        return !item.cannotPickup();
+    }
 
-	public static void InjectStack(World world, BlockPos pos, PlayerEntity player, ItemStack stack) {
-		if (!player.getInventory().insertStack(stack))
-			dropStack(world, pos, stack);
-	}
+    public static void InjectStack(World world, BlockPos pos, PlayerEntity player, ItemStack stack) {
+        if (!player.getInventory().insertStack(stack))
+            dropStack(world, pos, stack);
+    }
 }
