@@ -4,11 +4,13 @@
   "package": "dev.keesmand.magnetcommand.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "ModEntityDataSaverMixin",
-    "ServerPlayerEntityMixin",
     "BlockMixin",
+    "ItemScattererMixin",
+    "ModEntityDataSaverMixin",
     "PlayerManagerMixin",
-    "ServerPlayerInteractionManagerMixin"
+    "ServerPlayerEntityMixin",
+    "ServerPlayerInteractionManagerMixin",
+    "ServerWorldMixin"
   ],
   "client": [
   ],
