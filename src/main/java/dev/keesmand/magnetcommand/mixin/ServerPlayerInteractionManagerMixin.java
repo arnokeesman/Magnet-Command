@@ -1,9 +1,6 @@
 package dev.keesmand.magnetcommand.mixin;
 
 import dev.keesmand.magnetcommand.MagnetCommandMod;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.util.math.BlockPos;
@@ -23,9 +20,9 @@ public class ServerPlayerInteractionManagerMixin {
 
     @Inject(
             method = "tryBreakBlock",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;onBreak(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/entity/player/PlayerEntity;)V"),
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;onBreak(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/entity/player/PlayerEntity;)Lnet/minecraft/block/BlockState;"),
             locals = LocalCapture.CAPTURE_FAILHARD)
-    void storeBreakingAuthor(BlockPos pos, CallbackInfoReturnable<Boolean> cir, BlockState blockState, BlockEntity blockEntity, Block block) {
+    void storeBreakingAuthor(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         MagnetCommandMod.BLOCKS_BROKEN_BY.put(pos, player);
     }
 }
