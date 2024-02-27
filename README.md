@@ -17,11 +17,13 @@ This mod adds a magnet command to the game which allows you to pull items toward
 ### Config
 The config is located at `/config/magnet-command.json`.
 
-| Option                                | Description                                                                | Default value |
-|---------------------------------------|----------------------------------------------------------------------------|---------------|
-| `permissionLevel`                     | The default permission/OP level for all modes                              | 2             |
-| `modes.*.enabled`                     | Enable/disable modes                                                       | true          |
-| `modes.Range.range`                   | The range in blocks for Range mode                                         | 3             |
-| `modes.Range.moveMode`                | Movement mode for the magnet. Options: Pull, Teleport                      | "Pull"        |
-| `modes.OnBreak.dropLocation`          | Where to drop items if they don't fit in inventory. Options: Block, Player | "Block"       |
-| `modes.OnBreak.includeContainerItems` | Enable/disable injecting items from containers like chests and furnaces    | true          |
+| Option                                | Description                                                                   | Default value |
+|---------------------------------------|-------------------------------------------------------------------------------|---------------|
+| `permissionLevel`                     | The default permission/OP level for all modes                                 | 2             |
+| `modes.*.enabled`                     | Enable/disable modes                                                          | true          |
+| `modes.Range.range`                   | The range in blocks for Range mode                                            | 3             |
+| `modes.Range.mode`                    | Movement mode for the magnet. Options: Pull, Teleport                         | "Pull"        |
+| `modes.Range.pullStrengthMultiplier`  | Increase or decrease the pull speed for items                                 | 1.0           |
+| `modes.Range.skipCanPickUpCheck`      | Skipping this check makes it so that items are pulled towards you immediately | false         |
+| `modes.OnBreak.dropLocation`          | Where to drop items if they don't fit in inventory. Options: Block, Player    | "Block"       |
+| `modes.OnBreak.includeContainerItems` | Enable/disable injecting items from containers like chests and furnaces       | true          |

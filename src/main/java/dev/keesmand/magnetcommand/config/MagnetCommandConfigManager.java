@@ -33,6 +33,8 @@ public class MagnetCommandConfigManager {
         rangeMode.addProperty("range", config.range);
         rangeMode.addProperty("_c1", "moveMode can be either Pull or Teleport");
         rangeMode.addProperty("moveMode", config.moveMode.name());
+        rangeMode.addProperty("pullStrengthMultiplier", config.pullStrengthMultiplier);
+        rangeMode.addProperty("skipCanPickUpCheck", config.skipCanPickUpCheck);
 
         JsonObject onBreakMode = new JsonObject();
         modes.add("OnBreak", onBreakMode);
@@ -60,6 +62,8 @@ public class MagnetCommandConfigManager {
         }
 
         try {
+            MagnetCommandConfig defaultConfig = null;
+
             JsonObject jsonConfig = new Gson().fromJson(Files.readString(Path.of(configFile)), JsonObject.class);
             int configVersion = jsonConfig.get("CONFIG_VERSION").getAsInt();
             if (configVersion != 1) throw new IllegalArgumentException("unknown config version");
@@ -76,6 +80,21 @@ public class MagnetCommandConfigManager {
             if (!isValidEnumValue(MoveMode.class, moveModeString))
                 throw new IllegalArgumentException("unknown moveMode");
             MoveMode moveMode = MoveMode.valueOf(moveModeString);
+            double pullStrengthMultiplier;
+            if (rangeModeObject.has("pullStrengthMultiplier"))
+                pullStrengthMultiplier =  rangeModeObject.get("pullStrengthMultiplier").getAsDouble();
+            else {
+                defaultConfig = generateDefault();
+                pullStrengthMultiplier =  defaultConfig.pullStrengthMultiplier;
+            }
+            boolean skipCanPickUpCheck;
+            if (rangeModeObject.has("skipCanPickUpCheck"))
+                skipCanPickUpCheck = rangeModeObject.get("skipCanPickUpCheck").getAsBoolean();
+            else {
+                if (defaultConfig == null) defaultConfig = generateDefault();
+                skipCanPickUpCheck = defaultConfig.skipCanPickUpCheck;
+            }
+
 
             JsonObject onBreakModeObject = modesObject.get("OnBreak").getAsJsonObject();
             boolean onBreakEnabled = onBreakModeObject.get("enabled").getAsBoolean();
@@ -83,9 +102,25 @@ public class MagnetCommandConfigManager {
             if (!isValidEnumValue(DropMode.class, dropModeString))
                 throw new IllegalArgumentException("unknown dropLocation value");
             DropMode dropMode = DropMode.valueOf(dropModeString);
-            boolean includeContainerItems = !onBreakModeObject.has("includeContainerItems") || onBreakModeObject.get("includeContainerItems").getAsBoolean();
+            boolean includeContainerItems;
+            if (onBreakModeObject.has("includeContainerItems"))
+                includeContainerItems = onBreakModeObject.get("includeContainerItems").getAsBoolean();
+            else {
+                if (defaultConfig == null) defaultConfig = generateDefault();
+                includeContainerItems = defaultConfig.includeContainerItems;
+            }
 
-            MagnetCommandConfig config = new MagnetCommandConfig(permissionLevel, rangeEnabled, range, moveMode, onBreakEnabled, dropMode, includeContainerItems);
+            MagnetCommandConfig config = new MagnetCommandConfig(
+                    permissionLevel,
+                    rangeEnabled,
+                    range,
+                    moveMode,
+                    onBreakEnabled,
+                    dropMode,
+                    includeContainerItems,
+                    pullStrengthMultiplier,
+                    skipCanPickUpCheck
+            );
             save(config);
             return config;
 
@@ -100,7 +135,17 @@ public class MagnetCommandConfigManager {
     }
 
     static MagnetCommandConfig generateDefault() {
-        return new MagnetCommandConfig(2, true, 3, MoveMode.Pull, true, DropMode.Block, true);
+        return new MagnetCommandConfig(
+                2,
+                true,
+                3,
+                MoveMode.Pull,
+                true,
+                DropMode.Block,
+                true,
+                1,
+                false
+        );
     }
 
     private static <E extends Enum<E>> boolean isValidEnumValue(Class<E> enumType, String value) {

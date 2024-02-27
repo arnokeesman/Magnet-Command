@@ -11,8 +11,10 @@ public class MagnetCommandConfig {
     public final boolean onBreakEnabled;
     public final DropMode dropLocation;
     public final boolean includeContainerItems;
+    public final double pullStrengthMultiplier;
+    public final boolean skipCanPickUpCheck;
 
-    public MagnetCommandConfig(int permissionLevel, boolean rangeEnabled, int range, MoveMode moveMode, boolean onBreakEnabled, DropMode dropLocation, boolean includeContainerItems) {
+    public MagnetCommandConfig(int permissionLevel, boolean rangeEnabled, int range, MoveMode moveMode, boolean onBreakEnabled, DropMode dropLocation, boolean includeContainerItems, double pullStrengthMultiplier, boolean skipCanPickUpCheck) {
         this.permissionLevel = permissionLevel;
         this.rangeEnabled = rangeEnabled;
         this.range = range;
@@ -20,5 +22,7 @@ public class MagnetCommandConfig {
         this.onBreakEnabled = onBreakEnabled;
         this.dropLocation = dropLocation;
         this.includeContainerItems = includeContainerItems;
+        this.pullStrengthMultiplier = pullStrengthMultiplier;
+        this.skipCanPickUpCheck = skipCanPickUpCheck;
     }
 }

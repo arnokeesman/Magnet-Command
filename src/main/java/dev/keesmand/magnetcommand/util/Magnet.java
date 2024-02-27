@@ -1,5 +1,6 @@
 package dev.keesmand.magnetcommand.util;
 
+import dev.keesmand.magnetcommand.MagnetCommandMod;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -16,6 +17,7 @@ import static net.minecraft.block.Block.dropStack;
 public class Magnet {
     public static void PullItem(Vec3d playerPos, ItemEntity item, double pullStrength) {
         Vec3d itemPos = item.getPos();
+        pullStrength *= MagnetCommandMod.CONFIG.pullStrengthMultiplier;
         item.addVelocity(
                 force(playerPos.x - itemPos.x, pullStrength),
                 force(playerPos.y - itemPos.y, pullStrength),
@@ -35,6 +37,7 @@ public class Magnet {
     }
 
     public static boolean TestItemEntity(ItemEntity item) {
+        if (MagnetCommandMod.CONFIG.skipCanPickUpCheck) return true;
         return !item.cannotPickup();
     }
 
