@@ -12,6 +12,7 @@ This mod adds a magnet command to the game which allows you to pull items toward
 | `/magnet OnBreak` | Set magnet mode to OnBreak    | `magnet.mode.break` | 2*       |
 | `/magnet Off`     | Disable magnet behavior       | none                | 0        |
 | `/magnet info`    | Shows some info about the mod | none                | 0        |
+
 &ast; can be changed in config
 
 ### Config
