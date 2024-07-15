@@ -34,7 +34,6 @@ public class ItemScattererMixin {
             InjectStack(world,
                     config.dropLocation == DropMode.Block ? pos : player.getBlockPos(),
                     player, inventory.getStack(i));
-            inventory.removeStack(i);
         }
 
         ci.cancel();
