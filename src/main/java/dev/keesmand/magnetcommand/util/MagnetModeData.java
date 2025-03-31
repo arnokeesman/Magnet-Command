@@ -13,7 +13,7 @@ public class MagnetModeData {
 
     public static MagnetMode getMagnetMode(IEntityDataSaver player) {
         NbtCompound nbt = player.getPersistantData();
-        int modeInt = nbt.getInt("mode");
+        int modeInt = nbt.getInt("mode", MagnetMode.Off.ordinal());
         MagnetMode mode = MagnetMode.values()[modeInt];
         return mode;
     }
