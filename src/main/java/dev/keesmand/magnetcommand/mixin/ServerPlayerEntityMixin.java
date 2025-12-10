@@ -39,11 +39,11 @@ public abstract class ServerPlayerEntityMixin {
         double range = config.range;
 
         // get items within range
-        Vec3d playerPos = player.getPos();
+        Vec3d playerPos = player.getEntityPos();
         Box box = new Box(
                 playerPos.x + range, playerPos.y + range, playerPos.z + range,
                 playerPos.x - range, playerPos.y - range, playerPos.z - range);
-        List<ItemEntity> items = player.getWorld().getEntitiesByType(EntityType.ITEM, box, Magnet::TestItemEntity);
+        List<ItemEntity> items = player.getEntityWorld().getEntitiesByType(EntityType.ITEM, box, Magnet::TestItemEntity);
 
         items.forEach(item -> {
             if (config.moveMode == MoveMode.Pull) PullItem(playerPos, item, range);

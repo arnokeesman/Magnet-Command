@@ -16,7 +16,7 @@ import static net.minecraft.block.Block.dropStack;
 
 public class Magnet {
     public static void PullItem(Vec3d playerPos, ItemEntity item, double pullStrength) {
-        Vec3d itemPos = item.getPos();
+        Vec3d itemPos = item.getEntityPos();
         pullStrength *= MagnetCommandMod.CONFIG.pullStrengthMultiplier;
         item.addVelocity(
                 force(playerPos.x - itemPos.x, pullStrength),
