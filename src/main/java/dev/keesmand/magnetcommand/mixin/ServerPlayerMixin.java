@@ -23,7 +23,6 @@ import static dev.keesmand.magnetcommand.util.MagnetModeData.getMagnetMode;
 
 @Mixin(ServerPlayer.class)
 public abstract class ServerPlayerMixin {
-    @SuppressWarnings("UnreachableCode")
     @Inject(method = "tick", at = @At("HEAD"))
     private void magnetRangeMode(CallbackInfo callbackInfo) {
         // well this sure is a nice trick, thanks u/tom_the_geek

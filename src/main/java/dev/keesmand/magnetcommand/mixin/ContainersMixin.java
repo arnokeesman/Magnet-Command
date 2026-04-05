@@ -20,7 +20,7 @@ import static dev.keesmand.magnetcommand.util.Magnet.InjectStack;
 @Mixin(Containers.class)
 public class ContainersMixin {
     @Inject(method = "dropContents(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/Container;)V", at = @At("HEAD"), cancellable = true)
-    private static void inject(Level world, BlockPos pos, Container inventory, CallbackInfo ci) {
+    private static void inject(Level level, BlockPos pos, Container container, CallbackInfo ci) {
         MagnetCommandConfig config = MagnetCommandMod.CONFIG;
         if (config == null || !config.includeContainerItems) return;
 
@@ -29,10 +29,10 @@ public class ContainersMixin {
 
         if (MagnetModeData.getMagnetMode(player) != MagnetMode.OnBreak) return;
 
-        for (int i = 0; i < inventory.getContainerSize(); ++i) {
-            InjectStack(world,
+        for (int i = 0; i < container.getContainerSize(); ++i) {
+            InjectStack(level,
                     config.dropLocation == DropMode.Block ? pos : player.blockPosition(),
-                    player, inventory.getItem(i));
+                    player, container.getItem(i));
         }
 
         ci.cancel();

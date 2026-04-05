@@ -12,7 +12,7 @@ import java.util.function.BooleanSupplier;
 @Mixin(ServerLevel.class)
 public class ServerLevelMixin {
     @Inject(method = "tick", at = @At("HEAD"))
-    void clearBreakingAuthors(BooleanSupplier shouldKeepTicking, CallbackInfo ci) {
+    void clearBreakingAuthors(BooleanSupplier haveTime, CallbackInfo ci) {
         MagnetCommandMod.BLOCKS_BROKEN_BY.clear();
     }
 }

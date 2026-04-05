@@ -5,6 +5,7 @@ import dev.keesmand.magnetcommand.config.MagnetCommandConfig;
 import dev.keesmand.magnetcommand.enums.DropMode;
 import dev.keesmand.magnetcommand.enums.MagnetMode;
 import dev.keesmand.magnetcommand.util.MagnetModeData;
+import net.minecraft.world.item.ItemInstance;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -13,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -27,19 +29,19 @@ import static net.minecraft.world.level.block.Block.getDrops;
 public class BlockMixin {
     @Redirect(
             method = "dropResources(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;)V",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;getDrops(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;)Ljava/util/List;")
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;getDrops(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemInstance;)Ljava/util/List;")
     )
-    private static List<ItemStack> onDropStacks(BlockState state, ServerLevel world, BlockPos pos, BlockEntity blockEntity, Entity entity, ItemStack tool) {
-        List<ItemStack> droppedStacks = getDrops(state, world, pos, blockEntity, entity, tool);
+    private static List<ItemStack> onDropStacks(BlockState state, ServerLevel level, BlockPos pos, @Nullable BlockEntity blockEntity, @Nullable Entity breaker, ItemInstance tool) {
+        List<ItemStack> droppedStacks = getDrops(state, level, pos, blockEntity, breaker, tool);
 
         MagnetCommandConfig config = MagnetCommandMod.CONFIG;
         if (config == null) return droppedStacks;
 
-        if (entity instanceof ServerPlayer player) {
+        if (breaker instanceof ServerPlayer player) {
             MagnetMode mode = MagnetModeData.getMagnetMode(player);
             if (mode != MagnetMode.OnBreak) return droppedStacks;
 
-            droppedStacks.forEach(dropStack -> InjectStack(world,
+            droppedStacks.forEach(dropStack -> InjectStack(level,
                     config.dropLocation == DropMode.Block ? pos : player.blockPosition(),
                     player, dropStack));
 
