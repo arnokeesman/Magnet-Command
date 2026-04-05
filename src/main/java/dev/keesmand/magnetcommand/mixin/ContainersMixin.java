@@ -5,11 +5,11 @@ import dev.keesmand.magnetcommand.config.MagnetCommandConfig;
 import dev.keesmand.magnetcommand.enums.DropMode;
 import dev.keesmand.magnetcommand.enums.MagnetMode;
 import dev.keesmand.magnetcommand.util.MagnetModeData;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.Container;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Containers;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -17,22 +17,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static dev.keesmand.magnetcommand.util.Magnet.InjectStack;
 
-@Mixin(ItemScatterer.class)
-public class ItemScattererMixin {
-    @Inject(method = "spawn(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/inventory/Inventory;)V", at = @At("HEAD"), cancellable = true)
-    private static void inject(World world, BlockPos pos, Inventory inventory, CallbackInfo ci) {
+@Mixin(Containers.class)
+public class ContainersMixin {
+    @Inject(method = "dropContents(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/Container;)V", at = @At("HEAD"), cancellable = true)
+    private static void inject(Level world, BlockPos pos, Container inventory, CallbackInfo ci) {
         MagnetCommandConfig config = MagnetCommandMod.CONFIG;
         if (config == null || !config.includeContainerItems) return;
 
-        ServerPlayerEntity player = MagnetCommandMod.BLOCKS_BROKEN_BY.getOrDefault(pos, null);
+        ServerPlayer player = MagnetCommandMod.BLOCKS_BROKEN_BY.getOrDefault(pos, null);
         if (player == null) return;
 
         if (MagnetModeData.getMagnetMode(player) != MagnetMode.OnBreak) return;
 
-        for (int i = 0; i < inventory.size(); ++i) {
+        for (int i = 0; i < inventory.getContainerSize(); ++i) {
             InjectStack(world,
-                    config.dropLocation == DropMode.Block ? pos : player.getBlockPos(),
-                    player, inventory.getStack(i));
+                    config.dropLocation == DropMode.Block ? pos : player.blockPosition(),
+                    player, inventory.getItem(i));
         }
 
         ci.cancel();

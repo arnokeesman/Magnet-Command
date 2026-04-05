@@ -11,9 +11,9 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.ModMetadata;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.BlockPos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +27,8 @@ public class MagnetCommandMod implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     private static final String logPrefix = "[" + MOD_METADATA.getName() + "] ";
     public static MagnetCommandConfig CONFIG;
-    public static Map<BlockPos, ServerPlayerEntity> BLOCKS_BROKEN_BY;
-    public static final PlayerDataStorage<NbtCompound> DATA_STORAGE = new NbtDataStorage("magnet_command");
+    public static Map<BlockPos, ServerPlayer> BLOCKS_BROKEN_BY;
+    public static final PlayerDataStorage<CompoundTag> DATA_STORAGE = new NbtDataStorage("magnet_command");
 
     static {
         PlayerDataApi.register(DATA_STORAGE);
