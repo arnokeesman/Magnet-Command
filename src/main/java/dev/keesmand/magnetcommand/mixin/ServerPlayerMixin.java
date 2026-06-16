@@ -5,7 +5,7 @@ import dev.keesmand.magnetcommand.config.MagnetCommandConfig;
 import dev.keesmand.magnetcommand.enums.MagnetMode;
 import dev.keesmand.magnetcommand.enums.MoveMode;
 import dev.keesmand.magnetcommand.util.Magnet;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.AABB;
@@ -42,7 +42,7 @@ public abstract class ServerPlayerMixin {
         AABB box = new AABB(
                 playerPos.x + range, playerPos.y + range, playerPos.z + range,
                 playerPos.x - range, playerPos.y - range, playerPos.z - range);
-        List<ItemEntity> items = player.level().getEntities(EntityType.ITEM, box, Magnet::TestItemEntity);
+        List<ItemEntity> items = player.level().getEntities(EntityTypes.ITEM, box, Magnet::TestItemEntity);
 
         items.forEach(item -> {
             if (config.moveMode == MoveMode.Pull) PullItem(playerPos, item, range);
